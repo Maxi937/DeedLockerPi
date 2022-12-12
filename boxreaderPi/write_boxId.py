@@ -15,13 +15,10 @@ from pn532 import *
 
 def configurePN532():
   pn532 = PN532_UART(debug=False, reset=20)
+  pn532.SAM_configuration()
 
   ic, ver, rev, support = pn532.get_firmware_version()
   print('Found PN532 with firmware version: {0}.{1}'.format(ver, rev))
-
-  # Configure PN532 to communicate with MiFare cards
-  pn532.SAM_configuration()
-
   return pn532
 
 def awaitRFID(pn532):
