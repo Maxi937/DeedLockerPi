@@ -1,13 +1,3 @@
-"""
-Warning: DO NOT write the blocks of 4N+3 (3, 7, 11, ..., 63)
-or else you will change the password for blocks 4N ~ 4N+2.
-
-Note: 
-1.  The first 6 bytes (KEY A) of the 4N+3 blocks are always shown as 0x00,
-since 'KEY A' is unreadable. In contrast, the last 6 bytes (KEY B) of the 
-4N+3 blocks are readable.
-2.  Block 0 is unwritable. 
-"""
 import RPi.GPIO as GPIO
 import pn532.pn532 as nfc
 import math
