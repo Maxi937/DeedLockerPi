@@ -36,7 +36,7 @@ def awaitRFID(pn532):
   print('Found card with UID:', [hex(i) for i in uid])
   return uid
 
-# Take in a list of bytes and add empty bytes if number != 16
+# Take in a string, parse to bytes - fill last 16 with empties
 def parseBytes(stringToParse):
   payload = {}
   frameSize = 16
