@@ -1,7 +1,4 @@
 """
-This example shows connecting to the PN532 and writing an M1
-type RFID tag
-
 Warning: DO NOT write the blocks of 4N+3 (3, 7, 11, ..., 63)
 or else you will change the password for blocks 4N ~ 4N+2.
 

@@ -1,6 +1,5 @@
 """
-This example shows connecting to the PN532 and reading an M1
-type RFID tag
+Dump all info from Mifare 
 """
 
 import RPi.GPIO as GPIO
