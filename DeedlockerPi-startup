@@ -7,11 +7,9 @@ test $? -eq 0 || exit 1 "you should have sudo privilege to run this script"
 
 echo installing packages
 
-sudo apt update -y
 while read -r p ; do apt-get install -y $p ; done < <(cat << "EOF"
-    git
     python3-pip
-    nodejs
+    node
     npm
 EOF
 )
