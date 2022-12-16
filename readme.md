@@ -25,3 +25,11 @@ Note:
 | package requirements overview | <https://www.raspberrypi.com/newread-rfid-and-nfc-tokens-with-raspberry-pi-hackspace-37/> |
 | code examples                 | <https://www.waveshare.com/wiki/PN532_NFC_HAT#Raspberry_Pi_examples>                      |
 | layout of Mifare Blocks/Bytes | <https://www.waveshare.com/w/upload/c/c7/MF1S50YYX_V1.pdf>                                |
+
+
+# Dependencies
+
+- nodejs
+- npm
+- pip3
+- pyserial
