@@ -9,32 +9,29 @@ import RPi.GPIO as GPIO
 import pn532.pn532 as nfc
 import sys
 import requests
+import time
 from pn532 import *
 
 
 def configurePN532():
   pn532 = PN532_UART(debug=False, reset=20)
   pn532.SAM_configuration()
-
   ic, ver, rev, support = pn532.get_firmware_version()
-  try:
-    data = { 'message' : 'Found PN532 with firmware version: {0}.{1}'.format(ver, rev) }
-    sendToServer(data)
-  except err:
-    print(err)
 
   print('Found PN532 with firmware version: {0}.{1}'.format(ver, rev))
-
+  data = { 
+    'code' : 200,
+    'message' : 'Configuration Success - Found PN532 with firmware version: {0}.{1}'.format(ver, rev) 
+  }
+  sendToServer(data)
   return pn532
 
 def awaitRFID(pn532):
-  try:
-    data = { 'message' : 'Waiting for RFID to read from!' }
-    sendToServer(data)
-  except err:
-    print(err)
-  
   print('Waiting for RFID to read from!')
+  data = { 
+    'message' : 'Waiting for RFID to read from!' }
+  sendToServer(data)
+
   while True:
       # Check if a card is available to read
       uid = pn532.read_passive_target(timeout=0.5)
@@ -43,7 +40,6 @@ def awaitRFID(pn532):
       if uid is not None:
           break
   print('Found card with UID:', [hex(i) for i in uid])
-
   return uid
 
 def readBlock(uid, block_number):
@@ -59,15 +55,38 @@ def readBlock(uid, block_number):
     GPIO.cleanup()
 
 def sendToServer(dataAsJson):
-  requests.post("http://localhost:4000/deedlockerPi/Response", json=dataAsJson)
-
-    
+  try:
+    requests.post("http://localhost:4000/deedlockerPi/Response", json=dataAsJson)
+  except BaseException as e:
+    print(e)
+     
 # Main
 if __name__ =="__main__":
   pn532 = configurePN532()
-  uid = awaitRFID(pn532)
 
-  data = { 'BoxID' : readBlock(uid, 6) + readBlock(uid, 8) }
-  sendToServer(data)
+  while True:
+    try:
+      uid = awaitRFID(pn532)
+      boxId = readBlock(uid, 6) + readBlock(uid, 8)
+
+      data = { 
+        'code' : 200,
+        'data' : boxId,
+        'message' : 'Successful Read'
+        }
+      sendToServer(data)
+    except BaseException as e:
+      errorMessage = str(e)
+      data = {
+        'code' : 500,
+        'data' : errorMessage,
+        'message' : 'Error'
+      }
+      sendToServer(data)
+    
+    print('cooldown')
+    time.sleep(3)
+
+
   #print(data)
 
