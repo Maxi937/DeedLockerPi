@@ -9,14 +9,12 @@ echo installing packages
 
 while read -r p ; do apt-get install -y $p ; done < <(cat << "EOF"
     python3-pip
-    node
+    nodejs
     npm
 EOF
 )
 
 while read -r p ; do pip install -y $p ; done < <(cat << "EOF"
-    RPi.GPIO
-    spidev
     pyserial
 EOF
 )
@@ -27,5 +25,3 @@ echo or
 echo hit Ctrl+C to quit
 echo -e "\n"
 sleep 6
-
-sudo apt-get install -y tig
