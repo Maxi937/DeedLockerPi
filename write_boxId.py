@@ -1,6 +1,7 @@
 import RPi.GPIO as GPIO
 import pn532.pn532 as nfc
 import math
+import sys
 from pn532 import *
 
 def configurePN532():

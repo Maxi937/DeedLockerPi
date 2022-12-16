@@ -1,9 +1,14 @@
+#!/usr/bin/python
+
+
 """
 Connecting to the PN532 and reading an M1
 """
 
 import RPi.GPIO as GPIO
 import pn532.pn532 as nfc
+import sys
+import requests
 from pn532 import *
 
 
@@ -12,12 +17,24 @@ def configurePN532():
   pn532.SAM_configuration()
 
   ic, ver, rev, support = pn532.get_firmware_version()
+  try:
+    data = { 'message' : 'Found PN532 with firmware version: {0}.{1}'.format(ver, rev) }
+    sendToServer(data)
+  except err:
+    print(err)
+
   print('Found PN532 with firmware version: {0}.{1}'.format(ver, rev))
 
   return pn532
 
 def awaitRFID(pn532):
-  print('Waiting for RFID/NFC card to write to!')
+  try:
+    data = { 'message' : 'Waiting for RFID to read from!' }
+    sendToServer(data)
+  except err:
+    print(err)
+  
+  print('Waiting for RFID to read from!')
   while True:
       # Check if a card is available to read
       uid = pn532.read_passive_target(timeout=0.5)
@@ -41,13 +58,16 @@ def readBlock(uid, block_number):
   finally:
     GPIO.cleanup()
 
+def sendToServer(dataAsJson):
+  requests.post("http://localhost:4000/deedlockerPi/Response", json=dataAsJson)
+
     
 # Main
 if __name__ =="__main__":
   pn532 = configurePN532()
   uid = awaitRFID(pn532)
 
-  data = readBlock(uid, 6) + readBlock(uid, 8)
-
-  print(data)
+  data = { 'BoxID' : readBlock(uid, 6) + readBlock(uid, 8) }
+  sendToServer(data)
+  #print(data)
 
