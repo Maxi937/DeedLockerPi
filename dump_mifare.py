@@ -3,7 +3,7 @@ Dump all info from Mifare
 """
 
 import RPi.GPIO as GPIO
-
+import sys
 import pn532.pn532 as nfc
 from pn532 import *
 
