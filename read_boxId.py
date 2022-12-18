@@ -57,7 +57,6 @@ def readBlock(uid, block_number):
 def findCoordFromIP(ipLookupApiKey):
   url = f'https://extreme-ip-lookup.com/json/?key={ipLookupApiKey}'
   r = requests.get(url)
-  
   data = json.loads(r.content.decode())
   return f'{data["lat"]},{data["lon"]}'
 
