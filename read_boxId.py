@@ -11,31 +11,31 @@ import sys
 import requests
 import time
 from pn532 import *
+from dotenv import load_dotenv
+import os
+import json
+import googlemaps
+from serverUtils import *
 
 
 def configurePN532():
   pn532 = PN532_UART(debug=False, reset=20)
   pn532.SAM_configuration()
   ic, ver, rev, support = pn532.get_firmware_version()
+  successMessage = 'Configuration Success - Found PN532 with firmware version: {0}.{1}'.format(ver, rev) 
 
   print('Found PN532 with firmware version: {0}.{1}'.format(ver, rev))
-  data = { 
-    'code' : 200,
-    'message' : 'Configuration Success - Found PN532 with firmware version: {0}.{1}'.format(ver, rev) 
-  }
-  sendToServer(data)
+  sendMessageToServer(buildPacket(200, "", successMessage))
   return pn532
 
 def awaitRFID(pn532):
   print('Waiting for RFID to read from!')
-  data = { 
-    'message' : 'Waiting for RFID to read from!' }
-  sendToServer(data)
+  sendMessageToServer(buildPacket(200, "", 'Waiting for RFID to read from!'))
 
   while True:
       # Check if a card is available to read
       uid = pn532.read_passive_target(timeout=0.5)
-      print('.', end="")
+
       # Try again if no card is available.
       if uid is not None:
           break
@@ -47,46 +47,55 @@ def readBlock(uid, block_number):
 
   try:
     pn532.mifare_classic_authenticate_block(uid, block_number=block_number, key_number=nfc.MIFARE_CMD_AUTH_A, key=key_a)
-    print("Block:", block_number, pn532.mifare_classic_read_block(block_number).decode())
-    return pn532.mifare_classic_read_block(block_number).decode()
+    # decode the bytes and remove any empties at the end
+    return pn532.mifare_classic_read_block(block_number).decode().rstrip('\x00')
   except nfc.PN532Error as e:
     print(e.errmsg)
   finally:
     GPIO.cleanup()
 
-def sendToServer(dataAsJson):
-  try:
-    requests.post("http://localhost:4000/deedlockerPi/Response", json=dataAsJson)
-  except BaseException as e:
-    print(e)
+def findCoordFromIP(ipLookupApiKey):
+  url = f'https://extreme-ip-lookup.com/json/?key={ipLookupApiKey}'
+  r = requests.get(url)
+  
+  data = json.loads(r.content.decode())
+  return f'{data["lat"]},{data["lon"]}'
+
+def findLocation(googleMapsApiKey, latlng):
+  gmaps = googlemaps.Client(key=googleMapsApiKey)
+  reverse_geocode_result = gmaps.reverse_geocode(latlng)
+  location = reverse_geocode_result[0]["formatted_address"]
+  return location
      
 # Main
 if __name__ =="__main__":
+  load_dotenv("./config/config.env")
+
+  # Configure pn532
   pn532 = configurePN532()
 
+  # RFID loop
   while True:
     try:
+      # Await an RFID and read blocks once presented
       uid = awaitRFID(pn532)
       boxId = readBlock(uid, 6) + readBlock(uid, 8)
 
-      data = { 
-        'code' : 200,
-        'data' : boxId,
-        'message' : 'Successful Read'
-        }
-      sendToServer(data)
+      # Find Location
+      latlng = findCoordFromIP(os.environ.get("IPLOOKUPKEY"))
+      location = findLocation(os.environ.get("GOOGLEMAPSKEY"), latlng)
+
+      # Compile data for server
+      locationData = {
+        'boxId' : boxId,
+        'location' : location
+      }
+
+      # Data as Json to server
+      sendLocationUpdateToServer(buildPacket(200, locationData, 'Successful Read'))
     except BaseException as e:
       errorMessage = str(e)
-      data = {
-        'code' : 500,
-        'data' : errorMessage,
-        'message' : 'Error'
-      }
-      sendToServer(data)
+      sendMessageToServer(buildPacket(500, errorMessage, 'Error'))
     
     print('cooldown')
     time.sleep(3)
-
-
-  #print(data)
-
