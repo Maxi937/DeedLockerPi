@@ -13,9 +13,8 @@ import time
 from pn532 import *
 from dotenv import load_dotenv
 import os
-import json
-import googlemaps
 from serverUtils import *
+from utils import *
 
 
 def configurePN532():
@@ -53,18 +52,6 @@ def readBlock(uid, block_number):
     print(e.errmsg)
   finally:
     GPIO.cleanup()
-
-def findCoordFromIP(ipLookupApiKey):
-  url = f'https://extreme-ip-lookup.com/json/?key={ipLookupApiKey}'
-  r = requests.get(url)
-  data = json.loads(r.content.decode())
-  return f'{data["lat"]},{data["lon"]}'
-
-def findLocation(googleMapsApiKey, latlng):
-  gmaps = googlemaps.Client(key=googleMapsApiKey)
-  reverse_geocode_result = gmaps.reverse_geocode(latlng)
-  location = reverse_geocode_result[0]["formatted_address"]
-  return location
      
 # Main
 if __name__ =="__main__":
@@ -87,7 +74,7 @@ if __name__ =="__main__":
       # Compile data for server
       locationData = {
         'boxId' : boxId,
-        'location' : location
+        'location' : parseLocation(location)
       }
 
       # Data as Json to server
