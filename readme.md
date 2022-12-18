@@ -33,3 +33,5 @@ Note:
 - npm
 - pip3
 - pyserial
+- googlemaps
+- puthon-dotenv
