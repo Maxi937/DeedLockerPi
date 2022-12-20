@@ -70,6 +70,7 @@ if __name__ =="__main__":
       # Find Location
       latlng = findCoordFromIP(os.environ.get("IPLOOKUPKEY"))
       location = findLocation(os.environ.get("GOOGLEMAPSKEY"), latlng)
+      
 
       # Compile data for server
       locationData = {
