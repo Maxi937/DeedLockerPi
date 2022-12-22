@@ -27,3 +27,12 @@ def sendLocationUpdateToServer(packet):
     requests.post(url, json=packet)
   except BaseException as e:
     print(e)
+
+def sendRfidUpdateToServer(packet):
+  route = '/updateRfid'
+  url = f'{os.environ.get("URL")}{route}'
+
+  try:
+    requests.post(url, json=packet)
+  except BaseException as e:
+    print(e)
