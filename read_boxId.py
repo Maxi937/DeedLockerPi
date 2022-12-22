@@ -7,11 +7,9 @@ Connecting to the PN532 and reading an M1
 
 import RPi.GPIO as GPIO
 import pn532.pn532 as nfc
-import sys
-import requests
 import time
+import sys
 from pn532 import *
-from dotenv import load_dotenv
 import os
 from serverUtils import *
 from utils import *
@@ -55,8 +53,7 @@ def readBlock(uid, block_number):
      
 # Main
 if __name__ =="__main__":
-  load_dotenv("./config/config.env")
-
+  
   # Configure pn532
   pn532 = configurePN532()
 
@@ -71,7 +68,6 @@ if __name__ =="__main__":
       latlng = findCoordFromIP(os.environ.get("IPLOOKUPKEY"))
       location = findLocation(os.environ.get("GOOGLEMAPSKEY"), latlng)
       
-
       # Compile data for server
       locationData = {
         'boxId' : boxId,
@@ -82,7 +78,9 @@ if __name__ =="__main__":
       sendLocationUpdateToServer(buildPacket(200, locationData, 'Successful Read'))
     except BaseException as e:
       errorMessage = str(e)
+      print(errorMessage)
       sendMessageToServer(buildPacket(500, errorMessage, 'Error'))
     
     print('cooldown')
+    GPIO.cleanup()
     time.sleep(3)
