@@ -61,6 +61,11 @@ if __name__ =="__main__":
   # Write Loop
   while True:
     uid = awaitRFID(pn532)
+  payload = parseBytes(boxId)
+
+  # Write Loop
+  while True:
+    uid = awaitRFID(pn532)
 
     try:
       writeToBlock(uid, 6, payload['frame1'])
