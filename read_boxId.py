@@ -73,7 +73,6 @@ if __name__ =="__main__":
         'boxId' : boxId,
         'location' : parseLocation(location)
       }
-
       
       # Data as Json to server
       sendLocationUpdateToServer(buildPacket(200, locationData, 'Successful Read'))

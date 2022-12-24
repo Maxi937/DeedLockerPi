@@ -72,7 +72,6 @@ if __name__ =="__main__":
         'rfid' : uid.decode(),
         'boxId' : boxId
       }
-      
       sendRfidUpdateToServer(buildPacket(200, rfidData, f'Successfully Wrote {boxId} to RFID'))
       break
     except BaseException as e: 

@@ -46,10 +46,6 @@ def parseBytes(stringToParse):
   encodedString = stringToParse.encode('utf-8')
   numberOfFrames = math.ceil(len(encodedString) / 16)
 
-  #print("String Length:", len(stringToParse))
-  #print("Frame Size:", frameSize)
-  #print("Frames Required:", numberOfFrames, "\n")
-
   for i in range(1, numberOfFrames+1):
     frameName = f"frame{i}"
 
