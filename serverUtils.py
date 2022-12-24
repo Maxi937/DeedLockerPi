@@ -12,7 +12,7 @@ def buildPacket(code, data, message):
 
 def sendMessageToServer(packet):
   route = '/rpiMessage'
-  url = f'{os.environ.get("URL")}{route}'
+  url = f'{os.environ.get("DEEDLOCKERNODESERVERURL")}{route}'
 
   try:
     requests.post(url, json=packet)
@@ -21,7 +21,7 @@ def sendMessageToServer(packet):
 
 def sendLocationUpdateToServer(packet):
   route = '/updateLocation'
-  url = f'{os.environ.get("URL")}{route}'
+  url = f'{os.environ.get("DEEDLOCKERNODESERVERURL")}{route}'
 
   try:
     requests.post(url, json=packet)
@@ -30,7 +30,7 @@ def sendLocationUpdateToServer(packet):
 
 def sendRfidUpdateToServer(packet):
   route = '/updateRfid'
-  url = f'{os.environ.get("URL")}{route}'
+  url = f'{os.environ.get("DEEDLOCKERNODESERVERURL")}{route}'
 
   try:
     requests.post(url, json=packet)
