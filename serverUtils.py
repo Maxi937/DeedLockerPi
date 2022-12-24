@@ -12,6 +12,7 @@ def buildPacket(code, data, message):
 
 def sendMessageToServer(packet):
   route = '/deedlockerPi/rpiMessage'
+  print(f'{os.environ.get("DEEDLOCKERNODESERVERURL")}{route}')
   url = f'{os.environ.get("DEEDLOCKERNODESERVERURL")}{route}'
 
   try:
