@@ -74,8 +74,10 @@ if __name__ =="__main__":
         'location' : parseLocation(location)
       }
 
+      
       # Data as Json to server
       sendLocationUpdateToServer(buildPacket(200, locationData, 'Successful Read'))
+      sendMessageToServer(buildPacket(200, locationData, 'Sent Location Update to Server'))
     except BaseException as e:
       errorMessage = str(e)
       print(errorMessage)
