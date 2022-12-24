@@ -11,7 +11,8 @@ def buildPacket(code, data, message):
   return packet
 
 def sendMessageToServer(packet):
-  route = '/rpiMessage'
+  route = '/deedlockerPi/rpiMessage'
+  print(f'{os.environ.get("DEEDLOCKERNODESERVERURL")}{route}')
   url = f'{os.environ.get("DEEDLOCKERNODESERVERURL")}{route}'
 
   try:
@@ -20,7 +21,7 @@ def sendMessageToServer(packet):
     print(e)
 
 def sendLocationUpdateToServer(packet):
-  route = '/updateLocation'
+  route = '/deedlockerPi/updateLocation'
   url = f'{os.environ.get("DEEDLOCKERNODESERVERURL")}{route}'
 
   try:
@@ -29,7 +30,7 @@ def sendLocationUpdateToServer(packet):
     print(e)
 
 def sendRfidUpdateToServer(packet):
-  route = '/updateRfid'
+  route = '/deedlockerPi/updateRfid'
   url = f'{os.environ.get("DEEDLOCKERNODESERVERURL")}{route}'
 
   try:
